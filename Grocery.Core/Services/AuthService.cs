@@ -1,4 +1,5 @@
 ﻿using Grocery.Core.Helpers;
+using Grocery.Core.Interfaces.Repositories;
 using Grocery.Core.Interfaces.Services;
 using Grocery.Core.Models;
 
@@ -13,10 +14,15 @@ namespace Grocery.Core.Services
         }
         public Client? Login(string email, string password)
         {
-            //Vraag de klantgegevens [Client] op die je zoekt met het opgegeven emailadres
-            //Als je een klant gevonden hebt controleer dan of het password matcht --> PasswordHelper.VerifyPassword(password, passwordFromClient)
-            //Als alles klopt dan klantgegveens teruggeven, anders null
-            return null;
+            if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password))
+                return null;
+            var client = _clientService.Get(email);
+            if (client == null)
+                return null;
+            bool isValid = client.verifyPassword(password);
+            if (!isValid)
+                return null;
+            return client;
         }
     }
 }
